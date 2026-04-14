@@ -1,0 +1,353 @@
+{
+  "name": "Appointment Booking Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "60a821a0-0a54-4986-a857-5848fa5c1d6c",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -416,
+        0
+      ],
+      "id": "4795b6da-aae2-43a0-afbf-1981fbef93be",
+      "name": "Webhook",
+      "webhookId": "60a821a0-0a54-4986-a857-5848fa5c1d6c"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "640f7896-4480-4f23-b256-293f1d0fd9d0",
+              "name": "body.patient_name",
+              "value": "={{ $json.body.patient_name }}",
+              "type": "string"
+            },
+            {
+              "id": "d6ddff7c-7280-4bc2-a7aa-426101342bc1",
+              "name": "body.email",
+              "value": "={{ $json.body.email }}",
+              "type": "string"
+            },
+            {
+              "id": "ab98ed82-f4b2-4364-b61f-f004ff8b6153",
+              "name": "body.phone",
+              "value": "={{ $json.body.phone }}",
+              "type": "string"
+            },
+            {
+              "id": "24a6a8cb-c20a-4d42-82e9-dce80ab6cca9",
+              "name": "body.appointment_date",
+              "value": "={{ $json.body.appointment_date }}",
+              "type": "string"
+            },
+            {
+              "id": "3eac85fe-ca32-45e4-82be-9b85bfe4cf5c",
+              "name": "body.appointment_time",
+              "value": "={{ $json.body.appointment_time }}",
+              "type": "string"
+            },
+            {
+              "id": "95eaedc6-f8e9-40ee-b2d1-4d59d8c703a0",
+              "name": "body.doctor_name",
+              "value": "={{ $json.body.doctor_name }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -192,
+        0
+      ],
+      "id": "b3ae500f-b3b9-494c-a5b4-360fecb5620e",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "5e1f3649-481d-4583-ad2b-ce676b0ea4fb",
+              "leftValue": "={{ $json.body.appointment_date }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        48,
+        0
+      ],
+      "id": "63c6fd61-307c-44b1-bcb3-1092a502da0f",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "appointments",
+          "mode": "list",
+          "cachedResultName": "appointments"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "patient_name": "={{ $json.body.patient_name }}",
+            "email": "={{ $json.body.email }}",
+            "phone": "={{ $json.body.phone }}",
+            "appointment_date": "={{ $json.body.appointment_date }}",
+            "appointment_time": "={{ $json.body.appointment_time }}",
+            "doctor_name": "={{ $json.body.doctor_name }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "patient_name",
+              "displayName": "patient_name",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "appointment_date",
+              "displayName": "appointment_date",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "appointment_time",
+              "displayName": "appointment_time",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "doctor_name",
+              "displayName": "doctor_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        288,
+        -64
+      ],
+      "id": "c5ac8b1b-967a-4462-b4b7-5064d8899514",
+      "name": "Insert rows in a table",
+      "credentials": {
+        "postgres": {
+          "id": "qMAQLvwCcamoyJzO",
+          "name": "Postgres account 5"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.email }}",
+        "subject": "✅ Appointment Confirmed!",
+        "emailType": "text",
+        "message": "=Dea{{ $json.patient_name }},  Your appointment is confirmed! 🎉  Doct{{ $json.doctor_name }}or:  Date:{{ $json.appointment_date }}  Time: {{ $json.appointment_time }}  Please arrive 10 minutes early.  Thank you!",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        496,
+        -64
+      ],
+      "id": "bb21cdb7-cd43-4514-9f3c-817283e09780",
+      "name": "Send a message",
+      "webhookId": "f01a06f4-23f8-4d63-9e67-427460e3d37b",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "m6D6W9Sp5nWEf5HR",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.body.email }}",
+        "subject": "cancelled",
+        "message": "=plz select appointment data{{ $json.body.appointment_date }} if {{ $json.body.doctor_name }} is aviable that date team contact you.",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        256,
+        96
+      ],
+      "id": "b6f848f4-42f9-4e01-91f8-e18b14cdc585",
+      "name": "Send a message1",
+      "webhookId": "c48a0abd-e901-47b5-a14e-a48c3402816e",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "m6D6W9Sp5nWEf5HR",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Insert rows in a table",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert rows in a table": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "3e6e2f87-abfe-4f2a-b90b-8754bd89b1a5",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e0a88b50afcb1fe65101fae706facd613ed754cb7175e918e99a2645cf6eb5fe"
+  },
+  "id": "5htVM0pwMIaKp8Fr",
+  "tags": []
+}

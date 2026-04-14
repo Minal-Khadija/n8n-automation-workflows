@@ -1,0 +1,56 @@
+{
+  "name": "task 1",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -128,
+        -64
+      ],
+      "id": "adabf6d2-0f4d-48e9-bae5-abeb67d8f056",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n\"name\": \"Shakaib\",\n\"course\": \"n8n Beginner\"\n}\n\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        80,
+        -64
+      ],
+      "id": "72eb174a-1ca2-4fa8-8f9b-160287f8a37f",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "fb8e20a4-0f89-4c01-9f0e-208922cf58e6",
+  "meta": {
+    "instanceId": "e0a88b50afcb1fe65101fae706facd613ed754cb7175e918e99a2645cf6eb5fe"
+  },
+  "id": "88QxlIX210SghqlC",
+  "tags": []
+}

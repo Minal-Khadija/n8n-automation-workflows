@@ -1,0 +1,239 @@
+{
+  "name": "File Upload Processing",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "2bbd2e5a-f233-4d58-8ced-92f9496f3f69",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "8f9368e4-2c3f-44b6-9b4f-74205e9da346",
+      "name": "Webhook",
+      "webhookId": "2bbd2e5a-f233-4d58-8ced-92f9496f3f69"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "de9060e5-fc9a-48ed-ba82-4b21c9e3c401",
+              "leftValue": "={{ $json.body.file_type }}",
+              "rightValue": "pdf",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        208,
+        0
+      ],
+      "id": "9afb2e81-99ee-498e-bbf4-e46bd7aa60d4",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "file_uploads",
+          "mode": "list",
+          "cachedResultName": "file_uploads"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "file_size": "={{ $json.body.file_size }}",
+            "file_name": "={{ $json.body.file_name }}",
+            "file_type": "={{ $json.body.file_type }}",
+            "uploaded_by": "={{ $json.body.uploaded_by }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "file_name",
+              "displayName": "file_name",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "file_type",
+              "displayName": "file_type",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "file_size",
+              "displayName": "file_size",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "uploaded_by",
+              "displayName": "uploaded_by",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        416,
+        -96
+      ],
+      "id": "e594c325-4b2f-481c-8445-819f40db49c1",
+      "name": "Insert rows in a table",
+      "credentials": {
+        "postgres": {
+          "id": "qMAQLvwCcamoyJzO",
+          "name": "Postgres account 5"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.uploaded_by }}",
+        "subject": "= File Processed:{{ $json.file_name }}",
+        "emailType": "text",
+        "message": "={{ $json.file_name }}Your file has been processed! File: Size{{ $json.file_size }}:  KB Status: Processed ✅",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        624,
+        -96
+      ],
+      "id": "16d9ad2b-2683-40b3-a769-7f7acb93e00b",
+      "name": "Send a message",
+      "webhookId": "66d73fa0-d820-4e0d-8dc0-560abe5b7fba",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "m6D6W9Sp5nWEf5HR",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Insert rows in a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert rows in a table": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "c1809b82-393c-4173-8b49-6d388457d7c9",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e0a88b50afcb1fe65101fae706facd613ed754cb7175e918e99a2645cf6eb5fe"
+  },
+  "id": "zoiJgkwsgf1jWQXL",
+  "tags": []
+}

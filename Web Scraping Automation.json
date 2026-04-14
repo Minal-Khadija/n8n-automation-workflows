@@ -1,0 +1,213 @@
+{
+  "name": "Web Scraping Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 10
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "3f0671a6-3a80-48d5-9dae-2dcc1f5f0c83",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "url": "https://remoteok.com/api",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "7b5c5fec-7c59-468f-a127-e21f6ed2538f",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "11qTSnZz1QebjT2NrWRxoax3PZ1HH_HqBhPPknZuwt58",
+          "mode": "list",
+          "cachedResultName": "auto-data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11qTSnZz1QebjT2NrWRxoax3PZ1HH_HqBhPPknZuwt58/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 184618316,
+          "mode": "list",
+          "cachedResultName": "Sheet2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11qTSnZz1QebjT2NrWRxoax3PZ1HH_HqBhPPknZuwt58/edit#gid=184618316"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "position": "={{ $json.position }}",
+            "date": "={{ $json.date }}",
+            "company": "={{ $json.company }}",
+            "location": "={{ $json.location }}",
+            "salary_min": "={{ $json.salary_min }}",
+            "url": "={{ $json.url }}",
+            "salary_max": "={{ $json.salary_max }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "position",
+              "displayName": "position",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "company",
+              "displayName": "company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "date",
+              "displayName": "date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "location",
+              "displayName": "location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "salary_min",
+              "displayName": "salary_min",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "salary_max",
+              "displayName": "salary_max",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        640,
+        0
+      ],
+      "id": "ee3af24b-1493-4eb8-b9e3-8375a6ae16f0",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "ugvuCsU3avERS0yM",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\n// Pehla item skip karo (legal/terms item hota hai)\nconst filtered = items.filter(item => \n  item.json.position && \n  item.json.company &&\n  item.json.id !== undefined\n);\n\nreturn filtered.map(item => ({\n  json: {\n    position: item.json.position,\n    company: item.json.company,\n    date: item.json.date,\n    location: item.json.location,\n    salary_min: item.json.salary_min,\n    salary_max: item.json.salary_max,\n    url: `https://remoteok.com/remote-jobs/${item.json.id}`\n  }\n}));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        416,
+        0
+      ],
+      "id": "07521490-9ed8-4e2e-9864-ecb20b0c21d4",
+      "name": "Code in JavaScript"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "acdd73d5-e2cd-4037-8974-d4755fabd793",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e0a88b50afcb1fe65101fae706facd613ed754cb7175e918e99a2645cf6eb5fe"
+  },
+  "id": "vEn8mEGXFzZRHO5U",
+  "tags": []
+}

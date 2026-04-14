@@ -1,0 +1,281 @@
+{
+  "name": "Lead Capture & CRM Integration",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5bd6c3b3-f156-4c96-8796-6cdd73196693",
+              "name": "NAME",
+              "value": "={{ $json.NAME }}",
+              "type": "string"
+            },
+            {
+              "id": "79a823a4-3d9c-489b-ae64-cf07b28f19f5",
+              "name": "EMAIL",
+              "value": "={{ $json.EMAIL }}",
+              "type": "string"
+            },
+            {
+              "id": "eb543145-abc7-4076-98c7-cb872dadc100",
+              "name": "PHONE",
+              "value": "={{ $json.PHONE }}",
+              "type": "string"
+            },
+            {
+              "id": "2933da3d-1ea7-437d-a406-a3a75c7817c2",
+              "name": "COMANY",
+              "value": "={{ $json.COMANY }}",
+              "type": "string"
+            },
+            {
+              "id": "2e7abdb3-d519-4e72-8072-5dddd917b238",
+              "name": "MESSAGE",
+              "value": "={{ $json.MESSAGE }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "a693c4ca-41b8-4156-bac9-b4c729acad90",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "leads",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "name": "={{ $json.NAME }}",
+            "email": "={{ $json.EMAIL }}",
+            "company": "={{ $json.COMANY }}",
+            "phone": "={{ $json.PHONE }}",
+            "message": "={{ $json.MESSAGE }}",
+            "status": "approved"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "company",
+              "displayName": "company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        416,
+        0
+      ],
+      "id": "c8181c89-1bfd-48df-b575-5fcfac1f13e6",
+      "name": "Insert rows in a table",
+      "credentials": {
+        "postgres": {
+          "id": "qMAQLvwCcamoyJzO",
+          "name": "Postgres account 5"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.email }}",
+        "subject": "Thank you for your interest! 🎉",
+        "message": "=Hi {{ $json.name }},  Thank you for reaching out to us!  We have received your inquiry and our team will contact you within 24 hours.  Your Details: - Name: {{ $json.name }} - Company: {{ $json.company }} - Message: {{ $json.message }}  Best Regards, The Team",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        624,
+        0
+      ],
+      "id": "0c286979-0361-4dfc-8444-a6c2643065f0",
+      "name": "Send a message",
+      "webhookId": "eb5ea43f-e856-40ae-b229-b2f5c18677a2",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "m6D6W9Sp5nWEf5HR",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "formTitle": "Contact Us",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "NAME"
+            },
+            {
+              "fieldLabel": "EMAIL",
+              "fieldType": "email"
+            },
+            {
+              "fieldLabel": "PHONE",
+              "fieldType": "number"
+            },
+            {
+              "fieldLabel": "COMANY"
+            },
+            {
+              "fieldLabel": "MESSAGE",
+              "fieldType": "textarea"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        0,
+        0
+      ],
+      "id": "ef6b19f4-9d01-45ad-9a58-8ca88aa952b8",
+      "name": "On form submission",
+      "webhookId": "fe823558-5e3f-4136-9c0f-538f37435458"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Insert rows in a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert rows in a table": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "a02342c6-d6fa-4540-8c63-74e4c6951e0d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e0a88b50afcb1fe65101fae706facd613ed754cb7175e918e99a2645cf6eb5fe"
+  },
+  "id": "qFUAXAH8vpkOfhSd",
+  "tags": []
+}

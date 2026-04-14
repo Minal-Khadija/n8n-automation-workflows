@@ -1,0 +1,213 @@
+{
+  "name": "Invoice / PDF Generator",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ab9d0a99-86df-4257-99b3-f1e8625ccee0",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "3f7ec765-092d-401f-8100-0b35679bf0c7",
+      "name": "Webhook",
+      "webhookId": "ab9d0a99-86df-4257-99b3-f1e8625ccee0"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "32eac530-d0d8-414d-b937-2a599591c9a7",
+              "name": "body.customer_name",
+              "value": "={{ $json.body.customer_name }}",
+              "type": "string"
+            },
+            {
+              "id": "155112ca-4f89-4d58-b69f-d324921a74cf",
+              "name": "body.customer_email",
+              "value": "={{ $json.body.customer_email }}",
+              "type": "string"
+            },
+            {
+              "id": "ba2571d9-30d3-4fb9-9f14-be0885dbddf8",
+              "name": "body.product_name",
+              "value": "={{ $json.body.product_name }}",
+              "type": "string"
+            },
+            {
+              "id": "2bedef86-7233-4e0f-8073-a19ec6d40a84",
+              "name": "body.quantity",
+              "value": "={{ $json.body.quantity }}",
+              "type": "number"
+            },
+            {
+              "id": "1fcd0e99-bd68-4c8c-86ae-1c6a16012987",
+              "name": "body.price",
+              "value": "={{ $json.body.price }}",
+              "type": "number"
+            },
+            {
+              "id": "93bd8d16-8779-4da1-ac52-27591aa14f20",
+              "name": "body.total",
+              "value": "={{ $json.body.total }}",
+              "type": "number"
+            },
+            {
+              "id": "84605971-430e-41c2-ae7d-e5bae519c30c",
+              "name": "body.invoice_number",
+              "value": "={{ $json.body.invoice_number }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "ca887652-bd41-4ed4-a0ac-e239bd28f267",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "html_content": "=<html>\n<head>\n  <style>\n    body {\n      font-family: Arial, sans-serif;\n      padding: 30px;\n      color: #333;\n    }\n    .invoice-box {\n      max-width: 800px;\n      margin: auto;\n      border: 1px solid #eee;\n      padding: 20px;\n    }\n    h1 {\n      text-align: center;\n      color: #444;\n    }\n    .details {\n      margin-bottom: 20px;\n    }\n    table {\n      width: 100%;\n      border-collapse: collapse;\n    }\n    table th, table td {\n      border: 1px solid #ddd;\n      padding: 10px;\n      text-align: left;\n    }\n    table th {\n      background-color: #f4f4f4;\n    }\n    .total {\n      text-align: right;\n      font-weight: bold;\n    }\n  </style>\n</head>\n\n<body>\n  <div class=\"invoice-box\">\n    <h1>INVOICE</h1>\n\n    <div class=\"details\">\n      <p><strong>Invoice No:</strong> {{$json.body.invoice_number}}</p>\n      <p><strong>Customer:</strong> {{$json.body.customer_name}}</p>\n      <p><strong>Email:</strong> {{$json.body.customer_email}}</p>\n    </div>\n\n    <table>\n      <tr>\n        <th>Product</th>\n        <th>Quantity</th>\n        <th>Price</th>\n        <th>Total</th>\n      </tr>\n\n      <tr>\n        <td>{{$json.body.product_name}}</td>\n        <td>{{$json.body.quantity}}</td>\n        <td>{{$json.body.price}}</td>\n        <td>{{$json.body.total}}</td>\n      </tr>\n    </table>\n\n    <p class=\"total\">\n      Grand Total: {{$json.body.total}}\n    </p>\n  </div>\n</body>\n</html>",
+        "output_format": "file",
+        "output_filename": "={{ $json.body.invoice_number }}"
+      },
+      "type": "n8n-nodes-htmlcsstopdf.htmlcsstopdf",
+      "typeVersion": 1,
+      "position": [
+        416,
+        -64
+      ],
+      "id": "d40caa2c-fb1e-44d2-afe8-ca77475f3d31",
+      "name": "Convert HTML to PDF",
+      "credentials": {
+        "htmlcsstopdfApi": {
+          "id": "WngRil9nx71EPprr",
+          "name": "HTML to PDF account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {
+          "includeUnpaired": false
+        }
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        576,
+        64
+      ],
+      "id": "614a7ca1-bf96-42d2-b237-9e4c5a2f0af1",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.body.customer_email }}",
+        "subject": "={{ $json.body.customer_name }} - Invoice {{ $json.body.invoice_number }}",
+        "message": "=<p>Hello ,</p>  <p>Please find attached your invoice <strong></strong>.</p>  <p>Thank you for your business.</p>  <p>Best regards,<br>Your Company</p>",
+        "options": {
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {
+                "property": "=data"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        784,
+        64
+      ],
+      "id": "d08953cd-ebe7-4dee-b1c0-783d3f48c1bb",
+      "name": "Send a message",
+      "webhookId": "eea06c1a-06d3-400b-b527-70d86c766e8f",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "m6D6W9Sp5nWEf5HR",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Convert HTML to PDF",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Convert HTML to PDF": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "6abc7748-2337-4c19-a078-6971ac3cbd39",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e0a88b50afcb1fe65101fae706facd613ed754cb7175e918e99a2645cf6eb5fe"
+  },
+  "id": "XR564OL0MdNgOb2x",
+  "tags": []
+}
