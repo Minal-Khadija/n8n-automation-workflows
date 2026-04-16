@@ -11,6 +11,7 @@
 6. Invoice PDF Generator
 7. Lead Capture & CRM Integration
 8. Multi-App Data Sync
+9. Social Media Automation 
 
 ## Setup:
 1. Import JSON in n8n
