@@ -1,0 +1,255 @@
+{
+  "name": ". Social Media Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "jsCode": "return [{\n  json: {\n    content: $input.first().json.content,\n    platform: $input.first().json.platform,\n    status: $input.first().json.status,\n    client_email: $input.first().json.client_email,\n    client_name: $input.first().json.client_name,\n    posted_at: new Date().toISOString()\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -256,
+        256
+      ],
+      "id": "015688cf-9bca-4461-8785-1df6b8c86c89",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.platform }}",
+                    "rightValue": "linkedin",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "3f21334e-9588-419e-bc37-3d8d88e9e437"
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -32,
+        256
+      ],
+      "id": "9c7fc29f-2ba4-4fd3-9e58-fade495e6698",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "5be4017d-c77a-4511-b9b6-31f15cd45857",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -688,
+        256
+      ],
+      "id": "a8b83061-3534-4f52-a563-fb1aed5955c6",
+      "name": "Webhook",
+      "webhookId": "5be4017d-c77a-4511-b9b6-31f15cd45857"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "11qTSnZz1QebjT2NrWRxoax3PZ1HH_HqBhPPknZuwt58",
+          "mode": "list",
+          "cachedResultName": "auto-data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11qTSnZz1QebjT2NrWRxoax3PZ1HH_HqBhPPknZuwt58/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2125632088,
+          "mode": "list",
+          "cachedResultName": "Sheet5",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11qTSnZz1QebjT2NrWRxoax3PZ1HH_HqBhPPknZuwt58/edit#gid=2125632088"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "content": "={{ $json.body.content }}",
+            "platform": "={{ $json.body.platform }}",
+            "status": "={{ $json.body.status }}",
+            "client_email": "={{ $json.body.client_email }}",
+            "client_name": "={{ $json.body.client_name }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "content",
+              "displayName": "content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "platform",
+              "displayName": "platform",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "client_email",
+              "displayName": "client_email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "client_name",
+              "displayName": "client_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -464,
+        256
+      ],
+      "id": "27103145-00e0-4967-9579-7827b1b336da",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "1XWLqCj30RqQFr4y",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "= {{ $json.client_email }}",
+        "subject": "=New Post Published for {{ $json.client_name }}",
+        "emailType": "text",
+        "message": "=Client: {{ $json.client_name }} Email: {{ $json.client_email }} Content: {{ $json.content }} Platform: {{ $json.platform }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        176,
+        256
+      ],
+      "id": "832f3cfa-1d52-403b-b804-57737955ec03",
+      "name": "Send a message",
+      "webhookId": "ae0d577e-26ba-4d4b-8321-bb5c5acf6ec2",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "SgwyZH5pt7ejqqhw",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "5a642242-211f-45e7-afb3-70f7c7b77e2c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "fbc00d114bbd1def22ade720b498f533e608d11288af8ee44a6bbc5d1988e16e"
+  },
+  "id": "L8ADOhXcDA96S9gS",
+  "tags": []
+}
